@@ -91,8 +91,11 @@ def main() -> int:
 
     out_dir = ROOT / "labels" / f"round{round_no}"
     if out_dir.exists():
-        shutil.rmtree(out_dir)
-    out_dir.mkdir(parents=True)
+        for child in out_dir.iterdir():
+            if child.is_file():
+                child.unlink()
+    else:
+        out_dir.mkdir(parents=True)
     for name, boxes in fixed.items():
         write_yolo(boxes, out_dir / f"{Path(name).stem}.txt")
     manifest["label_sources"] = sources
